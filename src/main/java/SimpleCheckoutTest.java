@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 
-public class CheckoutTest {
+public class SimpleCheckoutTest {
     public static void main(String[] args) throws InterruptedException {
 
         System.out.println("Starting Test: E-Commerce Add to Cart Flow");
@@ -16,33 +16,34 @@ public class CheckoutTest {
 
         driver.manage().window().maximize();
 
+
+        By by_username = By.id("user-name");
+        By by_password = By.id("password");
+        By by_login_btn = By.id("login-button");
+        By by_add_cart_btn = By.cssSelector("#add-to-cart-sauce-labs-onesie");
+        By by_cart_badge = By.cssSelector(".shopping_cart_badge");
+        By by_cart_link = By.className("shopping_cart_link");
+        By by_inv_item_name = By.className("inventory_item_name");
+
         try {
             driver.get("https://www.saucedemo.com/");
 
             System.out.println("Executing: Login with valid credentials");
 
-            WebElement username = driver.findElement(By.id("user-name"));
-            WebElement password = driver.findElement(By.id("password"));
-            WebElement loginButton = driver.findElement(By.id("login-button"));
-
-            username.sendKeys("standard_user");
-            password.sendKeys("secret_sauce");
-            loginButton.click();
-
-
+            driver.findElement(by_username).sendKeys("standard_user");
+            driver.findElement(by_password).sendKeys("secret_sauce");
+            driver.findElement(by_login_btn).click();
 
             System.out.println("Executing: Adding 'Onesie' to the cart");
 
-            WebElement addToCartButton = driver.findElement(By.cssSelector("#add-to-cart-sauce-labs-onesie"));
-
-            addToCartButton.click();
+            driver.findElement(by_add_cart_btn).click();
 
             System.out.println("Executing: Verifying cart badge");
 
             WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
 
 
-            WebElement cartBadge = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector(".shopping_cart_badge")));
+            WebElement cartBadge = wait.until(ExpectedConditions.visibilityOfElementLocated(by_cart_badge));
 
 
             if(cartBadge.isDisplayed() && cartBadge.getText().equals("1")) {
@@ -54,18 +55,14 @@ public class CheckoutTest {
 
             System.out.println("Executing: Verifying item in cart page");
 
-            WebElement cartLink = driver.findElement((By.className("shopping_cart_link")));
-            cartLink.click();
+            driver.findElement(by_cart_link).click();
 
-            WebElement cartItemName = driver.findElement(By.className("inventory_item_name"));
-
-            if (cartItemName.getText().equals("Sauce Labs Onesie")) {
+            if (driver.findElement(by_inv_item_name).getText().equals("Sauce Labs Onesie")) {
                 System.out.println("PASS: Onesie is correctly displaying in the cart.");
             } else {
                 System.out.println("FAIL: Incorrect item in cart.");
             }
 
-            Thread.sleep(3000);
 
         }
         catch (Exception e) {
